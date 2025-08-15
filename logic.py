@@ -35,8 +35,8 @@ class Logic(QMainWindow, Ui_login_page):
         Validates username and password, checks with the CSV file,
         and shows/hides GUI elements when logged successfully.
         """
-        username = self.input_Username.text().strip()
-        password = self.input_password.text().strip()
+        username = self.input_Username.text().strip().lower()
+        password = self.input_password.text().strip().lower()
 
         self.label_info.setText('')
 
@@ -73,7 +73,7 @@ class Logic(QMainWindow, Ui_login_page):
         """
         try:
             self.label_output_message.setText(" ")
-            amount = float(self.amount_input.text())
+            amount = float(self.amount_input.text().strip())
 
             if amount <= 0:
                 self.label_output_message.setText("Amount must be positive")

@@ -1,7 +1,19 @@
 from logic import *
 import csv
 
-def update_csv_value(filename, row_index, column_header, new_value):
+def update_csv_value(filename, row_index, column_header, new_value) -> None:
+    """
+    Updates a specific value in a CSV file.
+
+    Args:
+        filename (str): The path to the CSV file.
+        row_index (int): The 0-based index of the row to update.
+        column_header (str): The header of the column to update.
+        new_value (str): The new value to set.
+
+    Returns:
+        None
+    """
     rows = []
     try:
         with open(filename, 'r', newline='') as infile:
@@ -32,5 +44,3 @@ def update_csv_value(filename, row_index, column_header, new_value):
         writer = csv.DictWriter(outfile, fieldnames=headers)
         writer.writeheader()
         writer.writerows(rows)
-
-        print(f"Value updated successfully in '{filename}'.")

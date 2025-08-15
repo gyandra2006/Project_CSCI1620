@@ -1,9 +1,19 @@
-from operator import truediv
-from sys import flags
-from xmlrpc.client import boolean
-
 class Account:
-    def __init__(self, account_number, balance=0):
+    """
+     A class to represent a bank account with basic deposit and withdrawal functionality.
+
+    Attributes:
+        __account_number (str): Unique identifier for the account.
+        __account_balance (float): Current account balance.
+    """
+    def __init__(self, account_number, balance=0) -> None:
+        """
+        Initialize a new Account instance.
+
+        Args:
+            account_number (str): Unique account identifier.
+            balance (float): The starting balance and the value must be positive.
+        """
         self.__account_number = account_number
         if balance > 0:
             self.__account_balance = balance
@@ -11,72 +21,73 @@ class Account:
             self.__account_balance = 0
         self.set_balance(self.__account_balance)
 
-    def deposit(self, amount):
+    def deposit(self, amount) ->bool:
+        """
+        Deposit money into the account.
+
+        Args:
+            amount (float): Amount to deposit and value must be positive.
+
+        Returns:
+            bool: True if deposit was successful, False if amount is invalid or non-positive.
+        """
         if amount > 0:
             self.__account_balance = self.__account_balance + amount
             return True
         else:
             return False
 
-    def withdraw(self, amount):
+    def withdraw(self, amount) -> bool:
+        """
+        Withdraw money from the account if sufficient balance exists.
+
+        Args:
+            amount (float): Amount to withdraw and the value must be positive.The value also has to be less than or equal to the current balance.
+
+        Returns:
+            bool: True if withdrawal was successful, False otherwise.
+        """
         if (amount > 0) and (self.__account_balance >= amount):
             self.__account_balance = self.__account_balance - amount
             return True
         else:
             return False
 
-    def get_balance(self):
+    def get_balance(self) -> float:
+        """
+        Get the current balance of the account.
+
+        Returns:
+            float: Current account balance.
+        """
         return self.__account_balance
 
-    def get_account_number(self):
+    def get_account_number(self) -> str:
+        """
+        Get the account number.
+
+        Returns:
+            str: The account's unique identifier.
+        """
         return self.__account_number
 
-    def set_balance(self, value):
+    def set_balance(self, value) -> None :
+        """
+         Set the account balance.
+
+        Args:
+            value (float): New balance amount. Must be positive; otherwise balance is set to 0.
+        """
         if value > 0:
             self.__account_balance = value
         else:
             self.__account_balance = 0
 
-    def set_account_number(self, value):
+    def set_account_number(self, value) -> None:
+        """
+        Set the account number.
+
+        Args:
+            value (str): New account number.
+        """
         self.__account_number = value
-
-
-class SavingAccount(Account):
-    MINIMUM = 100
-    RATE = 0.02
-
-    def __init__(self, name):
-        super().__init__(name, SavingAccount.MINIMUM)
-        self.__deposit_count = 0
-
-    def apply_interest(self):
-        if self.__deposit_count % 5 == 0:
-            total = self.get_balance() + (0.02 * self.get_balance())
-            self.set_balance(total)
-
-    def deposit(self, amount):
-        if amount > 0:
-            super().deposit(amount)
-            self.__deposit_count += 1
-            self.apply_interest()
-            return True
-        else:
-            return False
-
-    def withdraw(self, amount):
-        if (amount > 0) and ((self.get_balance() - 100) >= amount):         
-            x = self.get_balance() - amount
-            self.set_balance(x)
-            return True
-        else:
-            return False
-
-    def set_balance(self, value):
-        if value < SavingAccount.MINIMUM:
-            super().set_balance(SavingAccount.MINIMUM)
-        else:
-            super().set_balance(value)
-
-
-    def __str__(self):
-        return f'SAVING ACCOUNT = {super().__str__()}'

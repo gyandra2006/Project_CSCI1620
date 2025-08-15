@@ -4,7 +4,16 @@ from data_handler import *
 from accounts import *
 
 class Logic(QMainWindow, Ui_login_page):
-    def __init__(self):
+    """
+        GUI class for Login & Account details page, this screen would switch between Login and Account pages.
+
+        Handles user login whereas Account page for transactions (deposit/withdraw), and update the CSV file.
+    """
+    def __init__(self) -> None:
+        """
+        Initializes the Logic GUI class, sets up the interface,
+        initializes user/account variables, and connects buttons to functions.
+        """
         super().__init__()
         self.setupUi(self)
 
@@ -19,18 +28,22 @@ class Logic(QMainWindow, Ui_login_page):
         self.Login_pb.clicked.connect(lambda : self.submit())
         self.Enter_pb.clicked.connect(lambda: self.transaction())
 
-    def submit(self):
+    def submit(self) -> None:
+        """
+        Handles user login.
+
+        Validates username and password, checks with the CSV file,
+        and shows/hides GUI elements when logged successfully.
+        """
         username = self.input_Username.text().strip()
         password = self.input_password.text().strip()
 
         self.label_info.setText('')
 
         if username == '':
-           self.label_info.setText('Please Enter Your Username')
+           self.label_info.setText('Please enter your username')
         elif password == '':
-           self.label_info.setText('Please Enter Your Password')
-        elif len(username) < 3 or len(password) < 3:
-            self.label_info.setText('Please use more 3 characters')
+           self.label_info.setText('Please enter your password')
         else:
             with open('user_account.csv', 'r', newline='') as csvfile:
 
@@ -50,7 +63,14 @@ class Logic(QMainWindow, Ui_login_page):
                         self.login_hide()
                         self.account_show()
 
-    def transaction(self):
+    def transaction(self) -> None:
+        """
+        Processes a deposit or withdrawal transactions.
+
+        Validates the input amount, checks which transaction type is selected,
+        updates the account balance, updates the CSV file, and displays output messages.
+        Deselects the radio button after the transaction.
+        """
         try:
             self.label_output_message.setText(" ")
             amount = float(self.amount_input.text())
@@ -63,7 +83,7 @@ class Logic(QMainWindow, Ui_login_page):
             elif self.withdraw_rb.isChecked():
                self.withdraw(self.__index, self.__acct_number, float(self.label_balance.text()), float(self.amount_input.text()))
             else:
-               self.label_output_message.setText("Please select an option")
+               self.label_output_message.setText("Please select transaction type")
                return
 
             self.amount_input.clear()
@@ -76,7 +96,18 @@ class Logic(QMainWindow, Ui_login_page):
         except TypeError:
             self.label_output_message.setText("Please enter numeric value")
 
-    def deposit(self, index, acc_number, acc_balance, deposit_amount):
+    def deposit(self, index, acc_number, acc_balance, deposit_amount) -> None:
+        """
+        Deposit an amount into the account and updates the balance.
+        Args:
+            index(int): Row index of the account in the CSV file.
+            acc_number: The account number.
+            acc_balance(float) :  Current balance of the account.
+            deposit_amount(float) : Amount to deposit.
+
+        Returns:
+        None
+        """
         current_account = Account(acc_number, acc_balance)
 
         if current_account.deposit(float(deposit_amount)):
@@ -87,7 +118,18 @@ class Logic(QMainWindow, Ui_login_page):
         else:
             self.label_output_message.setText("Deposit failed")
 
-    def withdraw(self,index, acc_number, acc_balance, withdraw_amount):
+    def withdraw(self,index, acc_number, acc_balance, withdraw_amount) -> None:
+        """
+        Withdraws an amount from the account if sufficient balance exists.
+        Args:
+            index(int): Row index of the account in the CSV file.
+            acc_number: The account number.
+            acc_balance(float): current balance of the account.
+            withdraw_amount(float): Amount to withdraw.
+
+        Returns:
+        None
+        """
         acc1 = Account(acc_number, acc_balance)
 
         if withdraw_amount > acc_balance:
@@ -102,7 +144,10 @@ class Logic(QMainWindow, Ui_login_page):
         else:
             self.label_output_message.setText("Withdraw failed")
 
-    def login_hide(self):
+    def login_hide(self) -> None:
+        """
+        Hides the login input fields and buttons after user login successfully.
+        """
         self.input_Username.hide()
         self.input_password.hide()
         self.label_password.hide()
@@ -111,7 +156,10 @@ class Logic(QMainWindow, Ui_login_page):
         self.Login_pb.hide()
         self.setWindowTitle('Account')
 
-    def account_hide(self):
+    def account_hide(self) -> None:
+        """
+        Hides all account page GUI elements
+        """
         self.label_accountholder.hide()
         self.label_accountusername.hide()
         self.label_accountnumber.hide()
@@ -125,8 +173,12 @@ class Logic(QMainWindow, Ui_login_page):
         self.amount_input.hide()
         self.Enter_pb.hide()
         self.label_output_message.hide()
+        self.label_dollar.hide()
 
-    def account_show(self):
+    def account_show(self) -> None:
+        """
+        Shows all account page GUI elements and updates labels with current account info.
+        """
         self.label_accountholder.show()
         self.label_accountusername.show()
         self.label_accountusername.setText(self.__acct_name)
@@ -137,6 +189,7 @@ class Logic(QMainWindow, Ui_login_page):
         self.label_user_account_number.setText(self.__acct_number)
         self.label_balance.show()
         self.label_balance.setText(f'{self.__balance}')
+        self.label_dollar.show()
 
         self.label_transaction.show()
         self.deposit_rb.show()
@@ -146,4 +199,3 @@ class Logic(QMainWindow, Ui_login_page):
         self.amount_input.show()
         self.Enter_pb.show()
         self.label_output_message.show()
-
